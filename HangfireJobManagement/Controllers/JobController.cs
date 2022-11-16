@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Hangfire;
+using HangfireJobManagement.Service;
 
 namespace HangfireJobManagement.Controllers;
 
@@ -12,6 +13,8 @@ public class JobController : ControllerBase
     public IActionResult SignUp()
     {
         var jobId = BackgroundJob.Enqueue(() => Console.WriteLine("SingUp is Success"));
+        JobLogger jobLogger = new JobLogger();
+        BackgroundJob.Enqueue(()=>jobLogger.TaskMethod(null));
         return Ok(jobId);
     }
 
@@ -20,6 +23,7 @@ public class JobController : ControllerBase
     public IActionResult SignUpWithDelay()
     {
         var jobId = BackgroundJob.Schedule(() => Console.WriteLine("Welcome my app"), TimeSpan.FromSeconds(3));
+        
         return Ok(jobId);
     }
 
