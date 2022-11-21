@@ -14,7 +14,7 @@ public class JobController : ControllerBase
     {
         var jobId = BackgroundJob.Enqueue(() => Console.WriteLine("SingUp is Success"));
         JobLogger jobLogger = new JobLogger();
-        BackgroundJob.Enqueue(()=>jobLogger.TaskMethod(null));
+        BackgroundJob.Enqueue(() => jobLogger.TaskMethod(null));
         return Ok(jobId);
     }
 
@@ -23,7 +23,7 @@ public class JobController : ControllerBase
     public IActionResult SignUpWithDelay()
     {
         var jobId = BackgroundJob.Schedule(() => Console.WriteLine("Welcome my app"), TimeSpan.FromSeconds(3));
-        
+
         return Ok(jobId);
     }
 
@@ -31,7 +31,16 @@ public class JobController : ControllerBase
     [Route("[action]")]
     public IActionResult ScheduleDiscountMail()
     {
-        RecurringJob.AddOrUpdate(() => Console.WriteLine("Discount Mail"),Cron.Weekly(DayOfWeek.Monday,09,30));
+        RecurringJob.AddOrUpdate(() => Console.WriteLine("Discount Mail"), Cron.Weekly(DayOfWeek.Monday, 09, 30));
         return Ok();
+    }
+
+    [HttpPost]
+    [Route("[action]")]
+    public IActionResult RunJobWithJobsLogger()
+    {
+        JobLogger jobLogger = new JobLogger();
+        RecurringJob.AddOrUpdate("sample",() => jobLogger.GenerateJobWithLogs(null, "Hello World !"), Cron.Minutely);
+        return Ok("");
     }
 }

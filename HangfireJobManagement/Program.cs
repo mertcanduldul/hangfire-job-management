@@ -1,4 +1,6 @@
 using Hangfire;
+using Hangfire.JobsLogger;
+using Hangfire.RecurringJobAdmin;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,8 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHangfire(x => 
-    x.UseSqlServerStorage("Server=localhost;Database=Hangfire;User=sa;Password=sifre; Trusted_Connection=False;"));
+builder.Services.AddHangfire(x =>
+    x.UseSqlServerStorage(
+            "Server=localhost;Database=Hangfire;User=sa;Password=Passw0rd.1; Trusted_Connection=False;")
+        .UseJobsLogger()
+        .UseRecurringJobAdmin()
+);
 builder.Services.AddHangfireServer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
